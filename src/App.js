@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Header from './components/Header';
+import Home from './pages/Home';
+import ItineraryPage from './pages/ItineraryPage';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const [itinerary, setItinerary] = useState([]);
+    const [buttonTexts, setButtonTexts] = useState({}); // New state for button texts
+
+    const handleAddToItinerary = (talk) => {
+        if (!itinerary.some(item => item.id === talk.id)) {
+            // Check for time conflicts
+            const hasConflict = itinerary.some(item => item.time === talk.time);
+            if (hasConflict) {
+                alert("This talk conflicts with another talk in your itinerary.");
+            } else {
+                setItinerary([...itinerary, talk]);
+                setButtonTexts(prev => ({ ...prev, [talk.id]: 'Added to Itinerary' })); // Update button text
+                alert("This talk is added in your itinerary.");
+                
+            }
+        } else {
+            alert("This talk is already in your itinerary.");
+        }
+    };
+
+    const handleRemoveFromItinerary = (id) => {
+        // Remove the talk from the itinerary
+        setItinerary(itinerary.filter(talk => talk.id !== id));
+        // Remove the button state from local storage
+        localStorage.removeItem(`itinerary-${id}`);
+        setButtonTexts(prev => ({ ...prev, [id]: 'Add to Itinerary' }));
+    };
+
+    return (
+        <Router>
+            <Header />
+            <Routes>
+                <Route path="/" element={<Home onAddToItinerary={handleAddToItinerary} buttonTexts={buttonTexts} />} />
+                <Route path="/itinerary" element={<ItineraryPage itinerary={itinerary} onRemoveFromItinerary={handleRemoveFromItinerary} />} />
+            </Routes>
+        </Router>
+    );
+};
 
 export default App;

@@ -23,6 +23,7 @@ const TalkDetails = ({ talk, onAddToItinerary, onClose, onRateTalk, buttonText  
         onRateTalk(talk.id, rating);
         setRating(0); // Reset rating input after submission
         onClose();
+        alert("Added rate to talk.");
   
     };
 

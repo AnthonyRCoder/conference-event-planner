@@ -31,6 +31,7 @@ const App = () => {
         // Remove the button state from local storage
         localStorage.removeItem(`itinerary-${id}`);
         setButtonTexts(prev => ({ ...prev, [id]: 'Add to Itinerary' }));
+        alert("This talk is remove in from itinerary.");
     };
 
     return (
